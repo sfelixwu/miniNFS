@@ -6,24 +6,29 @@
 CC = g++ -std=c++17
 
 # CFLAGS = -g
+
 # for most Linux environments, but might need to be changed to find json stuff
 CFLAGS = -g -I/usr/include/jsoncpp
 
 # CFLAGS = -g -Wall -Wstrict-prototypes
 # CFLAGS = -O3
 
+# the following, RPCG, are JSONRPC generated files
 RPCG_INCS =	mininfs_client.h mininfs_server.h
+
+# all files inherited from Core objects plus the RPCG stuff
 CORE_INCS =	Core.h Directory.h Shadow_Directory.h $(RPCG_INCS)
 CORE_OBJS =	Core.o Directory.o Shadow_Directory.o
 
-LDFLAGS_SV = -ljsoncpp -lmicrohttpd -ljsonrpccpp-common -ljsonrpccpp-server
-LDFLAGS_CL = -ljsoncpp -lcurl -ljsonrpccpp-common -ljsonrpccpp-client
+# libraries needed for JSON and JSONRPC
+LDFLAGS_SV = 	-ljsoncpp -lmicrohttpd -ljsonrpccpp-common -ljsonrpccpp-server
+LDFLAGS_CL = 	-ljsoncpp -lcurl -ljsonrpccpp-common -ljsonrpccpp-client
 
-# rules.
+# rules
+
 all: 	mininfs_client mininfs_server
 
-#
-#
+# why do I need this line?
 
 mininfs_client.h:	mininfs.json
 	jsonrpcstub mininfs.json --cpp-server=mininfs_Server --cpp-client=mininfs_Client
@@ -54,3 +59,5 @@ mininfs_client:		$(CORE_OBJS) mininfs_client.o
 
 clean:
 	rm -f *.o *~ core mininfs_client mininfs_server $(RPCG_INCS)
+
+# end of the Makefile

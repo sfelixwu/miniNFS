@@ -62,3 +62,34 @@ Shadow_Directory::Create
   }
   return myv;
 }
+
+Json::Value *
+Shadow_Directory::dumpJ
+()
+{
+  HttpClient httpclient((this->host_url).c_str());
+  mininfs_Client myClient(httpclient, JSONRPC_CLIENT_V2);
+  Json::Value myv;
+
+  try {
+    std::cout << "calling NFS dumpJ" << std::endl;
+
+    myv = myClient.dumpJ("dumpJ", "This is a Directory JSON string!",
+			 (this->class_id).c_str(), (this->host_url).c_str(),
+			 (this->object_id).c_str(), (this->owner_vsID).c_str());
+    cout << myv.toStyledString() << endl;
+  } catch (JsonRpcException &e) {
+    cerr << e.what() << endl;
+  }
+
+  Json::Value *myv_ptr = new Json::Value();
+  (*myv_ptr) = myv;
+  return myv_ptr;
+}
+
+bool
+Shadow_Directory::Jdump
+(Json::Value *mjv_ptr)
+{
+  return false;
+}

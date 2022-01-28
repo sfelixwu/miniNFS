@@ -13,7 +13,10 @@ class Dirent
  public:
   std::string name;
   std::string fhandle;  
+  Dirent();
   Dirent(std::string, std::string);
+  virtual Json::Value * dumpJ();
+  virtual bool Jdump(Json::Value *);
 };
 
 class Directory : public Core
@@ -29,6 +32,8 @@ class Directory : public Core
 	    std::string, std::string, std::string);
   virtual Json::Value LookUp(std::string, std::string);
   virtual Json::Value Create(std::string, std::string, std::string);
+  virtual Json::Value * dumpJ();
+  virtual bool Jdump(Json::Value *);
 };
 
 #endif  /* _DIRECTORY_H_ */

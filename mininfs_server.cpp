@@ -29,6 +29,7 @@ public:
   Mymininfs_Server(AbstractServerConnector &connector, serverVersion_t type);
   virtual Json::Value LookUp(const std::string& action, const std::string& arguments, const std::string& class_id, const std::string& fhandle, const std::string& filename, const std::string& host_url, const std::string& object_id, const std::string& owner_vsID);
   virtual Json::Value Create(const std::string& action, const std::string& arguments, const std::string& class_id, const std::string& created_class_id, const std::string& fhandle, const std::string& filename, const std::string& host_url, const std::string& object_id, const std::string& owner_vsID, const std::string& sattr);
+  virtual Json::Value dumpJ(const std::string& action, const std::string& arguments, const std::string& class_id, const std::string& host_url, const std::string& object_id, const std::string& owner_vsID);
 };
 
 Mymininfs_Server::Mymininfs_Server(AbstractServerConnector &connector, serverVersion_t type)
@@ -46,7 +47,6 @@ Mymininfs_Server::LookUp(const std::string& action, const std::string& arguments
 {
   Json::Value result;
   std::cout << action << " " << arguments << " " << owner_vsID << std::endl;
-  std::string strJson;
 
   std::cout << "SFelixWu receiving LookUp" << std::endl;
 
@@ -67,7 +67,6 @@ Mymininfs_Server::Create(const std::string& action, const std::string& arguments
 {
   Json::Value result;
   std::cout << action << " " << arguments << " " << owner_vsID << std::endl;
-  std::string strJson;
 
   std::cout << "SFelixWu receiving Create" << std::endl;
 
@@ -78,6 +77,35 @@ Mymininfs_Server::Create(const std::string& action, const std::string& arguments
   else
     {
       result = mounted->Create(fhandle, filename, sattr);
+    }
+
+  return result;
+}
+
+Json::Value
+Mymininfs_Server::dumpJ(const std::string& action, const std::string& arguments, const std::string& class_id, const std::string& host_url, const std::string& object_id, const std::string& owner_vsID)
+{
+  Json::Value result;
+  std::cout << action << " " << arguments << " " << owner_vsID << std::endl;
+
+  std::cout << "SFelixWu receiving dumpJ" << std::endl;
+
+  if (object_id != "00000002")
+    {
+      result["status"] = "NFSERR_STALE";
+    }
+  else
+    {
+      Json::Value *myv_ptr = mounted->dumpJ();
+      if (myv_ptr != NULL)
+	{
+	  result = *myv_ptr;
+	  result["status"] = "NFS_OK";
+	}
+      else
+	{
+	  result["status"] = "NFSERR_STALE";
+	}
     }
 
   return result;
